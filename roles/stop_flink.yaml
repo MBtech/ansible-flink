@@ -1,0 +1,4 @@
+---
+- hosts: jobmanager
+  roles:
+    - stopflink

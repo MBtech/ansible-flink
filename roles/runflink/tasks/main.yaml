@@ -1,0 +1,3 @@
+---
+- name: Run Flink
+  shell: daemon {{ base_path }}/flink/flink-{{ flink_version }}/bin/start-cluster.sh

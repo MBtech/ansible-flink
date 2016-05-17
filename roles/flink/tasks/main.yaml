@@ -1,0 +1,35 @@
+---
+- name: Create Directory
+  file: path={{ base_path  }}/flink state=directory recurse=yes owner={{ user_name }}
+  sudo: yes
+
+- name: Download Flink
+  get_url: url=http://www-eu.apache.org/dist/flink/flink-{{ flink_version }}/flink-{{ flink_version }}-bin-hadoop{{ hadoop_version }}-scala_{{scala_version}}.tgz dest={{ base_path  }}/flink
+
+- name: Untar Flink
+  unarchive: src={{ base_path }}/flink/flink-{{ flink_version }}-bin-hadoop{{ hadoop_version }}-scala_{{ scala_version }}.tgz dest={{ base_path  }}/flink copy=no
+
+- name: Copy config Flink
+  copy: src=flink-conf.yaml dest={{ base_path  }}/flink/flink-{{ flink_version }}/conf/flink-conf.yaml
+
+- name: Create Slave file
+  local_action: lineinfile   dest={{role_path}}/files/slaves
+                regexp='.*{{item}}$'
+                line="{{item}}"
+                state=present
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: groups['taskmanagers']
+
+- name: Create Master file
+  local_action: lineinfile   dest={{role_path}}/files/masters
+                regexp='.*{{item}}$'
+                line="{{item}}"
+                state=present
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: groups['jobmanager']
+
+- name: Copy master config
+  copy: src=masters dest={{ base_path }}/flink/flink-{{ flink_version }}/conf/masters
+
+- name: Copy slaves config
+  copy: src=slaves dest={{ base_path }}/flink/flink-{{ flink_version }}/conf/slaves

@@ -1,0 +1,17 @@
+[zookeeper]
+zkserver1 ansible_ssh_host=foo1.info.ucl.ac.be
+
+[jobmanager]
+jobmanager ansible_ssh_host=foo1.info.ucl.ac.be
+
+[taskmanagers]
+taskmanager1 ansible_ssh_host=foo1.info.ucl.ac.be
+taskmanager3 ansible_ssh_host=foo2.info.ucl.ac.be
+taskmanager2 ansible_ssh_host=foo3.info.ucl.ac.be
+
+[flink:children]
+jobmanager
+taskmanagers
+
+[allnodes:children]
+taskmanagers

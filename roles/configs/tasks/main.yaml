@@ -1,0 +1,22 @@
+---
+
+- name: "Hosts file"
+  lineinfile:   dest=/etc/hosts 
+                regexp='.*{{ item }}$'
+                line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}"
+                state=present
+  sudo: yes
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: groups['all']
+
+- name: "Install Daemon"
+  apt: pkg=daemon state=present
+  sudo: yes
+
+- name: "Install ifstat"
+  apt: pkg=ifstat state=present
+  sudo: yes
+
+- name: "Install sysstat"
+  apt: pkg=sysstat state=present
+  sudo: yes
